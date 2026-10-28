@@ -6,9 +6,9 @@
 
 export const MANUAL_URL = `${import.meta.env.BASE_URL}Manual%20de%20Opera%C3%A7%C3%A3o%20-%20Cortadeira%20LS-30.1%20AFH.pdf`;
 /** Página impressa no manual -> página do arquivo PDF (capa sem número). */
-export const pdfPage = (printed: number) => printed + 1;
+export const pdfPage = (printed) => printed + 1;
 
-const CAPTIONS: [string, number][] = [
+const CAPTIONS = [
   ["Chave Geral", 5],
   ["Botão Emergência Botoeira Principal", 6],
   ["Botão Emergência Botoeira Acesso Afiação", 6],
@@ -60,8 +60,8 @@ const CAPTIONS: [string, number][] = [
 
 export const FIGURES = CAPTIONS.map(([caption, page], i) => ({ n: i + 1, caption, page, url: MANUAL_URL + "#page=" + (page + 1) }));
 
-const figs = (...ns: number[]) => ns.map((n) => FIGURES[n - 1]!);
-const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const figs = (...ns) => ns.map((n) => FIGURES[n - 1]);
+const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
 export const PENDING_LABEL = "Confirmar no Manual de Operação oficial ou com instrutor autorizado.";
 
