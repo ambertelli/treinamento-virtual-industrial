@@ -179,7 +179,7 @@ export default function App() {
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:14,padding:"18px",position:"relative",zIndex:1,width:"100%"}}>
               {getFigureNumbers(active.imageCaption).filter(n => figureFiles[n]).map(n => (
                 <figure key={n} style={{margin:0,background:"#fff",border:"1px solid #dfe7e1",borderRadius:10,padding:10,overflow:"hidden"}}>
-                  <img src={`/figuras-rew450/${figureFiles[n]}`} alt={`Figura ${n} — manual da Rebobinadeira REW-450 AFH`} loading="lazy" style={{display:"block",width:"100%",height:190,objectFit:"contain",background:"#f7f8f6"}}/>
+                  <img src={`${import.meta.env.BASE_URL}figuras-rew450/${figureFiles[n]}`} alt={`Figura ${n} — manual da Rebobinadeira REW-450 AFH`} loading="lazy" style={{display:"block",width:"100%",height:190,objectFit:"contain",background:"#f7f8f6"}}/>
                   <figcaption style={{fontSize:12,color:"#52645a",paddingTop:8,fontWeight:600}}>Figura {n} — REW-450 AFH</figcaption>
                 </figure>
               ))}
