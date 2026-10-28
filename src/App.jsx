@@ -178,7 +178,11 @@ export default function App() {
 
       <section className="course-heading">
         <div><span className="eyebrow">MANUAL OFICIAL COMO REFERÊNCIA</span><h2>Trilha de aprendizagem</h2><p className="muted">{course.source}. O conteúdo deve ser validado pelo responsável técnico antes do uso operacional.</p></div>
-        <div className="overall-progress"><strong>{percent}%</strong><span>concluído</span><div className="track"><span style={{width:`${percent}%`}}/></div></div>
+        <div className="course-actions" style={{display:"flex",flexDirection:"column",gap:10,minWidth:220}}>
+          <div className="overall-progress"><strong>{percent}%</strong><span>concluído</span><div className="track"><span style={{width:`${percent}%`}}/></div></div>
+          <a className="primary" style={{textDecoration:"none"}} href={`${import.meta.env.BASE_URL}Manual%20de%20Opera%C3%A7%C3%A3o%20-%20Rebobinadeira%20REW-450%20AFH.pdf`} target="_blank" rel="noreferrer">Abrir manual original em PDF</a>
+          <a className="secondary" style={{textDecoration:"none"}} href={`${import.meta.env.BASE_URL}Manual%20de%20Opera%C3%A7%C3%A3o%20-%20Rebobinadeira%20REW-450%20AFH.pdf`} download="Manual-Rebobinadeira-REW-450-AFH.pdf">Baixar manual em PDF</a>
+        </div>
       </section>
 
       <div className="training-layout">
