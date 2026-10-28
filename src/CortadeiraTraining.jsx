@@ -1,0 +1,50 @@
+import { useEffect, useMemo, useState } from "react";
+import { MODULES, FIGURES, MANUAL_URL, PENDING_LABEL, narrationFor, qid } from "./cortadeira-course.js";
+import { ArrowLeft, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Factory, GraduationCap, Play, ShieldCheck, Volume2, XCircle } from "lucide-react";
+
+const KEY = "tropicos-cortadeira-progress-v1";
+function readProgress() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; } }
+
+export default function CortadeiraTraining({ onBack }) {
+  const [saved] = useState(readProgress);
+  const [activeId, setActiveId] = useState(() => MODULES.some(m => m.id === saved.activeId) ? saved.activeId : MODULES[0].id);
+  const [answers, setAnswers] = useState(saved.answers || {});
+  const [submitted, setSubmitted] = useState(saved.submitted || {});
+  const [passed, setPassed] = useState(saved.passed || {});
+  const [speaking, setSpeaking] = useState(false);
+  const active = MODULES.find(m => m.id === activeId) || MODULES[0];
+  const score = active.questions.filter((q, i) => answers[qid(active, i)] === q.correct).length;
+  const done = Boolean(submitted[active.id]);
+  const completed = MODULES.filter(m => passed[m.id]).length;
+  const percent = Math.round(completed / MODULES.length * 100);
+  useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify({ activeId, answers, submitted, passed })); } catch {} }, [activeId, answers, submitted, passed]);
+  useEffect(() => () => { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); }, []);
+  function stopVoice() { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); setSpeaking(false); }
+  function speak() {
+    if (!("speechSynthesis" in window)) { alert("A narração automática não está disponível neste navegador."); return; }
+    if (speaking) { stopVoice(); return; }
+    const u = new SpeechSynthesisUtterance(narrationFor(active)); u.lang = "pt-BR"; u.rate = 0.94;
+    u.onend = () => setSpeaking(false); u.onerror = () => setSpeaking(false);
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); setSpeaking(true);
+  }
+  function choose(id) { stopVoice(); setActiveId(id); }
+  function submit() { setSubmitted(p => ({ ...p, [active.id]: true })); setPassed(p => ({ ...p, [active.id]: score / active.questions.length >= 0.8 })); }
+  function retry() { setAnswers(p => { const n = { ...p }; active.questions.forEach((_, i) => delete n[qid(active, i)]); return n; }); setSubmitted(p => ({ ...p, [active.id]: false })); setPassed(p => ({ ...p, [active.id]: false })); }
+  function move(delta) { const i = MODULES.findIndex(m => m.id === active.id); const n = Math.max(0, Math.min(MODULES.length - 1, i + delta)); choose(MODULES[n].id); }
+  return <div className="cutter-course">
+    <header className="topbar"><button className="brand" onClick={onBack}><span className="brandicon"><Factory size={22}/></span><span>TRÓPICOS<small>ACADEMIA INDUSTRIAL</small></span></button><div className="topbar-right"><span className="safe"><ShieldCheck size={16}/> Aprendizagem com segurança</span><span className="course-chip">LS-30.1 AFH</span></div></header>
+    <main>
+      <button className="back" onClick={onBack}><ArrowLeft size={16}/> Voltar aos treinamentos</button>
+      <section className="cutter-hero"><div><span className="eyebrow"><GraduationCap size={15}/> TREINAMENTO INSTITUCIONAL</span><h1>Cortadeira<br/><em>LS-30.1 AFH</em></h1><p>Treinamento baseado no Manual de Operação, com figuras originais, narração em português e avaliações por etapa.</p><div className="hero-meta"><span><BookOpen size={15}/> {MODULES.length} módulos</span><span><Volume2 size={15}/> Narrador virtual</span><span><CheckCircle2 size={15}/> Avaliação por módulo</span></div></div><div className="cutter-hero-art"><Factory size={82} strokeWidth={1.2}/><small>APRENDIZAGEM CONTÍNUA</small></div></section>
+      <section className="course-heading"><div><span className="eyebrow">MANUAL OFICIAL COMO REFERÊNCIA</span><h2>Trilha de aprendizagem</h2><p className="muted">Manual de Operação — Cortadeira LS-30.1 AFH (42 páginas). O conteúdo deve ser validado pelo responsável técnico antes do uso operacional.</p></div><div className="course-actions"><div className="overall-progress"><strong>{percent}%</strong><span>concluído</span><div className="track"><span style={{width:percent+"%"}}/></div></div><a className="primary" href={MANUAL_URL} target="_blank" rel="noreferrer">Abrir manual original em PDF</a><a className="secondary" href={MANUAL_URL} download="Manual-Cortadeira-LS-30.1-AFH.pdf">Baixar manual em PDF</a></div></section>
+      <div className="training-layout"><aside className="sidebar"><div className="sidebar-title"><BookOpen size={18}/><b>Conteúdo do curso</b></div>{MODULES.map((m,i)=><div className="module-group" key={m.id}><div className="module-heading"><span>{m.code}</span><b>{passed[m.id] ? "Aprovado" : "Pendente"}</b></div><h3>{m.title}</h3><p>{m.intro}</p><button className={"lesson-link "+(active.id===m.id?"active":"")} onClick={()=>choose(m.id)}><span className="lesson-status">{passed[m.id]?<CheckCircle2 size={16}/>:i+1}</span><span className="lesson-link-text"><strong>Abrir módulo</strong><small>{done ? passed[m.id]?"Aprovado":"Refazer avaliação":"Estudo + avaliação"}</small></span><ChevronRight size={15}/></button></div>)}</aside>
+      <article className="lesson-panel"><div className="lesson-topline"><span className="eyebrow">{active.code} · {active.chapter}</span><span className="ref-chip">Páginas {active.pages[0]}–{active.pages[1]}</span></div><h2>{active.title}</h2><p className="muted">{active.intro}</p>
+      {active.sections.map((s,si)=><section className="cutter-section" key={active.id+"-"+si}><div className="cutter-section-title"><span>{s.num}</span><h3>{s.title}</h3><a href={MANUAL_URL+"#page="+(s.page+1)} target="_blank" rel="noreferrer">Manual · pág. {s.page}</a></div>{s.paragraphs.map((p,pi)=><p key={pi}>{p}</p>)}{s.figures?.length>0&&<div className="cutter-figures">{s.figures.map(f=><a key={f.n} href={MANUAL_URL+"#page="+(f.page+1)} target="_blank" rel="noreferrer"><span className="figure-number">Figura {f.n}</span><b>{f.caption}</b><small>Manual · página {f.page} · abrir figura no PDF ↗</small></a>)}</div>}{s.pending&&<div className="safety-note"><ShieldCheck size={19}/><div><b>Confirmação técnica necessária</b><p>{s.pending}</p></div></div>}</section>)}
+      <div className="narrator-bar"><span className={"narrator-icon "+(speaking?"narrator-speaking":"")}><Volume2 size={19}/></span><div><b>Narrador virtual</b><small>{speaking?"Lendo esta etapa…":"Leitura em português brasileiro"}</small></div><button className={"listen-btn "+(speaking?"playing":"")} onClick={speak}>{speaking?<XCircle size={16}/>:<Play size={16}/>} {speaking?"Parar":"Ouvir explicação"}</button></div>
+      <div className="safety-note"><ShieldCheck size={20}/><div><b>Alerta de segurança</b><p>Este conteúdo didático não substitui o manual integral, a capacitação prática supervisionada nem os procedimentos de segurança da empresa. Nunca contorne proteções; confirme dúvidas com o responsável técnico.</p></div></div>
+      <section className="quiz-section"><div className="quiz-title"><div><span className="eyebrow">VERIFICAÇÃO DE APRENDIZAGEM</span><h3>Confira o que você aprendeu</h3></div><span className="pass-mark">Mínimo: 80%</span></div><div className="questions">{active.questions.map((q,qi)=><fieldset className="question" key={q.prompt} disabled={done}><legend>{qi+1}. {q.prompt}</legend>{q.options.map((o,oi)=><label key={o} className={"option "+(done&&oi===q.correct?"correct":"")+(done&&answers[qid(active,qi)]===oi&&oi!==q.correct?" incorrect":"")}><input type="radio" name={active.id+"-"+qi} checked={answers[qid(active,qi)]===oi} onChange={()=>setAnswers(p=>({...p,[qid(active,qi)]:oi}))}/><span>{o}</span>{done&&oi===q.correct&&<CheckCircle2 size={17}/>}</label>)}{done&&<p className="answer-explanation"><b>Explicação:</b> {q.explanation} <span>({q.ref})</span></p>}</fieldset>)}{!done?<button className="primary submit-quiz" onClick={submit} disabled={active.questions.some((_,i)=>answers[qid(active,i)]===undefined)}>Corrigir avaliação <CheckCircle2 size={17}/></button>:<div className={"result-banner "+(passed[active.id]?"success":"retry")}><div><b>{passed[active.id]?"Módulo aprovado!":"Ainda não aprovado"}</b><p>Você acertou {score} de {active.questions.length} ({Math.round(score/active.questions.length*100)}%).</p></div>{!passed[active.id]&&<button className="secondary" onClick={retry}>Tentar novamente</button>}</div>}</div></section>
+      <div className="lesson-footer"><button className="secondary" onClick={()=>move(-1)} disabled={MODULES[0].id===active.id}><ChevronLeft size={17}/> Anterior</button><span>Módulo {MODULES.findIndex(m=>m.id===active.id)+1} de {MODULES.length}</span><button className="primary" onClick={()=>move(1)} disabled={!passed[active.id]||MODULES[MODULES.length-1].id===active.id}>Próximo módulo <ChevronRight size={17}/></button></div></article></div>
+      <aside className="notice"><ShieldCheck size={22}/><div><b>Validação técnica e visual pendente</b><p>Revise as figuras e procedimentos com especialista autorizado antes do uso operacional. O capítulo de lubrificação contém figuras de localização; lubrificante, quantidade e periodicidade devem ser confirmados no plano de manutenção oficial.</p></div></aside>
+    </main><footer><span>© {new Date().getFullYear()} Trópicos · Academia Industrial</span><span><ShieldCheck size={14}/> Segurança, qualidade e aprendizagem contínua</span></footer>
+  </div>;
+}
