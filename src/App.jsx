@@ -164,7 +164,7 @@ function RebobinadeiraTraining({ onBack }) {
         <span className="brandicon"><Factory size={22}/></span>
         <span>TRÓPICOS<small>ACADEMIA INDUSTRIAL</small></span>
       </button>
-      <div className="topbar-right"><span className="safe"><ShieldCheck size={16}/> Aprendizagem com segurança</span><span className="course-chip">REW-450 AFH</span></div>
+      <div className="topbar-right course-topbar"><div className="header-course-title"><small>Treinamento Virtual Industrial</small><strong>Rebobinadeira <em>REW-450 AFH</em></strong></div><div className="header-progress"><div><span>Progresso do treinamento</span><b>{percent}%</b></div><i><span style={{width: `${percent}%`}} /></i></div><span className="safe"><ShieldCheck size={16}/> Segurança</span></div>
     </header>
     <main>
       <section className="hero">
