@@ -87,3 +87,78 @@
 .manual-page-preview iframe{display:block;width:100%;height:390px;border:0;background:#fff}
 .manual-page-preview>div{padding:8px 12px;color:#52645a;font-size:10px;font-weight:700;border-top:1px solid #e2e9e3}
 @media(max-width:560px){.manual-page-preview iframe{height:300px}}
+
+
+/* Layout unificado inspirado na referência: barra azul, navegação lateral e cartões claros. */
+:root{font-family:Arial,Helvetica,sans-serif;color:#123b72;background:#f4f9fd}
+body{background:#f4f9fd}
+.topbar{height:82px!important;min-height:82px;background:#06386d!important;color:#fff!important;border-bottom:0!important;padding:0 28px!important;gap:24px;box-shadow:0 3px 16px rgba(3,34,72,.12)}
+.brand{color:#fff!important;min-width:230px}
+.brandicon{background:#fff!important;color:#07447f!important;border-radius:12px!important}
+.brand small{color:#c5dcf6!important}
+.course-topbar{flex:1;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.header-course-title{display:flex;flex-direction:column;gap:4px;min-width:230px}
+.header-course-title small{font-size:11px;color:#c5dcf6;letter-spacing:.04em}
+.header-course-title strong{font-size:21px;color:#fff;font-weight:750}
+.header-course-title em{font-style:normal;color:#42c5f4}
+.header-progress{width:min(360px,32vw);min-width:190px}
+.header-progress>div{display:flex;justify-content:space-between;gap:12px;color:#fff;font-size:12px;margin-bottom:8px}
+.header-progress>div b{white-space:nowrap}
+.header-progress i{display:block;height:9px;border-radius:99px;background:#8eacc8;overflow:hidden}
+.header-progress i span{display:block;height:100%;border-radius:99px;background:#22dc9a;transition:width .25s}
+.topbar .safe{color:#e4f1ff!important;white-space:nowrap;font-size:11px}
+.app:has(.training-layout) main,.cutter-course main{width:100%!important;max-width:none!important;margin:0!important;padding:0 22px 30px!important}
+.app:has(.training-layout) .hero,.app:has(.training-layout) .course-heading,.cutter-course .cutter-hero,.cutter-course .course-heading,.cutter-course>.back{display:none!important}
+.training-layout{display:grid!important;grid-template-columns:280px minmax(0,1fr)!important;gap:22px!important;align-items:start!important;margin:22px auto!important;max-width:1600px}
+.sidebar{position:sticky!important;top:12px!important;max-height:calc(100vh - 105px)!important;overflow:auto!important;background:#f7fbff!important;border:1px solid #d8e9f8!important;border-radius:14px!important;padding:18px 13px!important;box-shadow:none!important}
+.sidebar-title{color:#0a3e7a!important;font-size:14px!important;padding:5px 8px 14px!important}
+.module-group{border-top:1px solid #e0edf8!important;padding:13px 7px!important;margin:0!important}
+.module-group h3{color:#0a3e7a!important;font-size:13px!important;line-height:1.4!important}
+.module-group>p{color:#607b98!important;font-size:11px!important}
+.module-heading{color:#52779b!important}
+.lesson-link{border-radius:10px!important;color:#174675!important;padding:10px!important}
+.lesson-link.active{background:#0877e8!important;color:#fff!important;box-shadow:0 5px 14px rgba(0,100,220,.17)!important}
+.lesson-link.active .lesson-status{background:#fff!important;color:#0877e8!important}
+.lesson-panel{background:#fff!important;border:1px solid #d6e8f8!important;border-radius:14px!important;padding:28px!important;box-shadow:none!important;min-width:0}
+.lesson-panel h2,.cutter-course .lesson-panel h2{color:#073f7f!important;font-size:28px!important;letter-spacing:-.02em}
+.lesson-panel p,.cutter-course .lesson-panel p{color:#264f7b}
+.lesson-topline{border-bottom:1px solid #e3effa!important;padding-bottom:13px!important}
+.ref-chip{background:#edf6ff!important;color:#24598b!important;border:1px solid #d7e9fa!important}
+.cutter-section{border-top:1px solid #e1edf8!important}
+.cutter-section-title h3{color:#0b437f!important}
+.cutter-section-title>span{background:#0877e8!important;color:#fff!important}
+.narrator-bar{background:#f5faff!important;border:1px solid #d4e8fb!important;border-radius:14px!important;padding:16px!important}
+.narrator-icon{background:#e2f1ff!important;color:#0754a0!important}
+.quiz-section{border-color:#dcebf8!important}
+.question{border-color:#d9e8f6!important;background:#fff!important}
+.option{border-color:#dce9f5!important;color:#244d78!important}
+.option input{accent-color:#0877e8!important}
+.primary,.listen-btn{background:#0877e8!important;border-color:#0877e8!important;color:#fff!important;border-radius:9px!important}
+.secondary{background:#f7fbff!important;border-color:#c7ddf2!important;color:#20558b!important;border-radius:9px!important}
+.safety-note,.cutter-course .safety-note{background:#fffaf0!important;border-color:#f0dfba!important}
+.app:has(.training-layout)>footer,.cutter-course>footer{padding:18px 26px!important;color:#6b83a0!important}
+.cutter-course .training-layout{grid-template-columns:280px minmax(0,1fr)!important;max-width:1600px!important;margin:22px auto!important;gap:22px!important}
+.cutter-course .sidebar{border-radius:14px!important}
+.cutter-course .lesson-panel{background:#fff!important;border:1px solid #d6e8f8!important;border-radius:14px!important;padding:28px!important;box-shadow:none!important}
+.cutter-course .manual-page-preview{border-color:#d5e7f7!important;background:#f5faff!important}
+.cutter-course .manual-page-preview>div{color:#52779b!important}
+.cutter-course .pass-mark{background:#eaf5ff!important;color:#15558e!important}
+.cutter-course .lesson-footer{border-color:#dfedf9!important}
+@media(max-width:1000px){
+ .topbar{height:auto!important;min-height:82px;padding:14px 18px!important;flex-wrap:wrap}
+ .course-topbar{flex-wrap:wrap;gap:12px}
+ .header-progress{width:100%;min-width:0;order:3}
+ .training-layout,.cutter-course .training-layout{grid-template-columns:1fr!important}
+ .sidebar{position:static!important;max-height:none!important}
+}
+@media(max-width:600px){
+ .topbar{align-items:flex-start!important}
+ .brand{min-width:0}
+ .header-course-title{min-width:0}
+ .header-course-title strong{font-size:16px}
+ .topbar .safe{display:none!important}
+ .app:has(.training-layout) main,.cutter-course main{padding:0 10px 20px!important}
+ .training-layout,.cutter-course .training-layout{margin:10px auto!important;gap:12px!important}
+ .lesson-panel,.cutter-course .lesson-panel{padding:16px!important}
+ .lesson-panel h2,.cutter-course .lesson-panel h2{font-size:23px!important}
+}
