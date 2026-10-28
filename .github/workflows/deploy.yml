@@ -43,10 +43,14 @@ jobs:
         run: |
           mkdir -p public
           cp "Manual de Operação - Rebobinadeira REW-450 AFH.pdf" public/
+          cp "Manual de Operação - Cortadeira LS-30.1 AFH.pdf" public/
           test -s "public/Manual de Operação - Rebobinadeira REW-450 AFH.pdf"
+          test -s "public/Manual de Operação - Cortadeira LS-30.1 AFH.pdf"
       - run: npm run build
-      - name: Verify published manual is in build output
-        run: test -s "dist/Manual de Operação - Rebobinadeira REW-450 AFH.pdf"
+      - name: Verify published manuals are in build output
+        run: |
+          test -s "dist/Manual de Operação - Rebobinadeira REW-450 AFH.pdf"
+          test -s "dist/Manual de Operação - Cortadeira LS-30.1 AFH.pdf"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
