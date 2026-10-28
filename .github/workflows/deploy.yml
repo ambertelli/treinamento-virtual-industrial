@@ -37,6 +37,8 @@ jobs:
           }
           console.log(`Validated ${names.length} referenced training figure files.`);
           NODE
+      - name: Validate course lessons and assessments
+        run: node scripts/validate-course.mjs
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
