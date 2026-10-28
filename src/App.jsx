@@ -1,19 +1,182 @@
-import { useState } from "react";
-import { ArrowLeft, BookOpen, CheckCircle2, ChevronRight, Clock3, Factory, Headphones, ShieldCheck, Volume2, Wrench, GraduationCap } from "lucide-react";
-const courses = [
- {id:"cortadeira",title:"Cortadeira LS-30.1 AFH",kind:"Cortadeira",icon:Wrench,desc:"Familiarização, preparação, inspeção e práticas seguras."},
- {id:"rebobinadeira",title:"Rebobinadeira REW-450 AFH",kind:"Rebobinadeira",icon:Factory,desc:"Familiarização, preparação, inspeção e conservação."}
-];
-const lessons = [
- {title:"Conhecimento do equipamento",time:"5 min",body:"Conheça a finalidade do equipamento, seus conjuntos principais e a função de cada componente. Identificações e imagens específicas devem ser conferidas no manual oficial da máquina."},
- {title:"Preparação e inspeção",time:"6 min",body:"Revise os requisitos de preparação e inspeção antes do uso. Execute somente verificações aprovadas pela empresa e descritas no procedimento oficial aplicável."},
- {title:"Operação segura",time:"8 min",body:"Reforce os princípios de segurança, os riscos associados ao equipamento e a importância de seguir os procedimentos autorizados, proteções instaladas e orientações do instrutor."},
- {title:"Limpeza e conservação",time:"4 min",body:"Conheça os princípios gerais de conservação e organização. Antes de qualquer intervenção, siga o procedimento formal de parada, isolamento de energias e liberação da máquina."}
-];
-export default function App(){
- const [courseId,setCourseId]=useState(""); const [step,setStep]=useState(0); const [done,setDone]=useState({}); const [speaking,setSpeaking]=useState(false);
- const course=courses.find(c=>c.id===courseId); const lesson=lessons[step];
- const count=lessons.filter((_,i)=>done[courseId+"-"+i]).length;
- function narrate(){if(!("speechSynthesis" in window)){alert("A narração não está disponível neste navegador.");return;}if(speaking){speechSynthesis.cancel();setSpeaking(false);return;}const u=new SpeechSynthesisUtterance(lesson.body);u.lang="pt-BR";u.onend=()=>setSpeaking(false);speechSynthesis.cancel();speechSynthesis.speak(u);setSpeaking(true);}
- return <div className="app"><header><a className="brand" href="#" onClick={e=>{e.preventDefault();setCourseId("")}}><span className="brandicon"><Factory size={22}/></span><span>TRÓPICOS<small>ACADEMIA INDUSTRIAL</small></span></a><span className="safe"><ShieldCheck size={16}/> Treinamento seguro</span></header><main>{!course?<><section className="hero"><div><span className="eyebrow"><GraduationCap size={15}/> APRENDIZAGEM INDUSTRIAL</span><h1>Conhecimento que<br/><em>move a indústria.</em></h1><p>Treinamentos interativos para conhecer equipamentos, reforçar boas práticas e aprender com orientação técnica.</p><div className="hero-meta"><span><BookOpen size={15}/> Módulos guiados</span><span><Headphones size={15}/> Narração opcional</span></div></div><div className="hero-art"><div className="rings"></div><div className="machine"><Factory size={82} strokeWidth={1.2}/></div><small>APRENDIZAGEM CONTÍNUA</small></div></section><section className="courses"><div className="section-title"><div><span className="eyebrow">BIBLIOTECA DE TREINAMENTOS</span><h2>Escolha seu equipamento</h2></div><span className="count">02 MÓDULOS</span></div><div className="cards">{courses.map((c,i)=>{const Icon=c.icon;const n=lessons.filter((_,j)=>done[c.id+"-"+j]).length;return <button className="card" key={c.id} onClick={()=>{setCourseId(c.id);setStep(0)}}><span className={"courseicon c"+i}><Icon size={25}/></span><div className="cardkind">{c.kind.toUpperCase()}<span className="dot"></span></div><h3>{c.title}</h3><p>{c.desc}</p><div className="progresslabel"><span>{n} de 4 lições concluídas</span><span>{n*25}%</span></div><div className="track"><span style={{width:n*25+"%"}}/></div><div className="cardfoot"><span>Conteúdo técnico em validação</span><span className="arrow"><ChevronRight size={18}/></span></div></button>})}</div></section><aside className="notice"><ShieldCheck size={22}/><div><b>Segurança em primeiro lugar</b><p>Este ambiente é um recurso didático. Não substitui o manual oficial, o treinamento prático supervisionado nem os procedimentos de segurança da empresa. O conteúdo técnico deve ser validado antes do uso operacional.</p></div></aside></>:<section className="training"><button className="back" onClick={()=>{speechSynthesis?.cancel();setSpeaking(false);setCourseId("")}}><ArrowLeft size={16}/> Voltar aos equipamentos</button><span className="eyebrow">{course.kind.toUpperCase()} · TREINAMENTO GUIADO</span><h1>{course.title}</h1><p className="subtitle">{course.desc}</p><div className="layout"><aside className="lessonlist"><b>Conteúdo do curso</b>{lessons.map((l,i)=><button key={l.title} className={i===step?"lesson active":"lesson"} onClick={()=>{setStep(i);speechSynthesis?.cancel();setSpeaking(false)}}><span className="number">{done[courseId+"-"+i]?<CheckCircle2 size={17}/>:String(i+1).padStart(2,"0")}</span><span><strong>{l.title}</strong><small><Clock3 size={12}/> {l.time}</small></span><ChevronRight size={15}/></button>)}<div className="progresslabel"><span>Seu progresso</span><b>{count}/4</b></div><div className="track"><span style={{width:count*25+"%"}}/></div></aside><article className="lessoncontent"><div className="visual"><div className="visualgrid"></div><Factory size={75} strokeWidth={1.2}/><span className="module">MÓDULO {String(step+1).padStart(2,"0")}</span><button className="listen" onClick={narrate}><Volume2 size={17}/>{speaking?"Parar narração":"Ouvir conteúdo"}</button></div><div className="lessonbody"><span className="eyebrow">LIÇÃO {step+1} DE 4 · {lesson.time.toUpperCase()}</span><h2>{lesson.title}</h2><p>{lesson.body}</p><div className="notice validation"><ShieldCheck size={19}/><div><b>Validação técnica necessária</b><p>Confirme procedimentos, imagens, limites operacionais e orientações com o manual oficial e um instrutor autorizado antes de utilizar esta lição para operação real.</p></div></div><div className="actions"><button className="secondary" disabled={step===0} onClick={()=>setStep(v=>v-1)}><ArrowLeft size={16}/> Anterior</button><button className="primary" onClick={()=>{setDone(p=>({...p,[courseId+"-"+step]:true}));if(step<3)setStep(v=>v+1)}}>{step===3?"Concluir lição":"Marcar como concluída"} <CheckCircle2 size={17}/></button></div></div></article></div></section>}</main><footer><span>© {new Date().getFullYear()} Trópicos · Academia Industrial</span><span><ShieldCheck size={14}/> Segurança, qualidade e aprendizagem contínua</span></footer></div>;
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Factory, GraduationCap, Headphones, Play, ShieldCheck, Volume2, XCircle, ClipboardCheck, Image as ImageIcon } from "lucide-react";
+import { course } from "./rew450-course";
+import "./style.css";
+
+const allLessons = course.modules.flatMap((module, moduleIndex) =>
+  module.topics.flatMap((topic, topicIndex) =>
+    topic.parts.map((part, partIndex) => ({
+      ...part, moduleId: module.id, moduleTitle: module.title, moduleIndex,
+      topicId: topic.id, topicTitle: topic.title, topicIndex, partIndex,
+      reference: topic.reference, key: `${module.id}-${topic.id}-${partIndex}`
+    }))
+  )
+);
+
+export default function App() {
+  const [activeKey, setActiveKey] = useState(allLessons[0].key);
+  const [answers, setAnswers] = useState({});
+  const [submitted, setSubmitted] = useState({});
+  const [passed, setPassed] = useState({});
+  const [speaking, setSpeaking] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [showCertificate, setShowCertificate] = useState(false);
+  const active = allLessons.find(item => item.key === activeKey) || allLessons[0];
+  const questions = active.questions;
+  const quizDone = Boolean(submitted[active.key]);
+  const score = questions.filter((q, i) => answers[`${active.key}-${i}`] === q.answer).length;
+  const completed = Object.keys(passed).filter(key => passed[key]).length;
+  const percent = Math.round(completed / allLessons.length * 100);
+  const allPassed = completed === allLessons.length;
+
+  useEffect(() => () => {
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  }, []);
+
+  const moduleProgress = useMemo(() => course.modules.map(module => {
+    const keys = allLessons.filter(l => l.moduleId === module.id).map(l => l.key);
+    return { id: module.id, title: module.title, done: keys.filter(k => passed[k]).length, total: keys.length };
+  }), [passed]);
+
+  function stopNarration() {
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    setSpeaking(false);
+  }
+  function narrate() {
+    if (!("speechSynthesis" in window)) {
+      window.alert("A narração automática não está disponível neste navegador.");
+      return;
+    }
+    if (speaking) { stopNarration(); return; }
+    const text = `${active.topicTitle}. ${active.title}. ${active.body}`;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "pt-BR";
+    utterance.rate = 0.94;
+    utterance.onend = () => setSpeaking(false);
+    utterance.onerror = () => setSpeaking(false);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    setSpeaking(true);
+  }
+  function chooseLesson(key) {
+    stopNarration();
+    setActiveKey(key);
+    setShowQuiz(false);
+    setShowCertificate(false);
+  }
+  function submitQuiz() {
+    setSubmitted(previous => ({ ...previous, [active.key]: true }));
+    const currentScore = questions.filter((q, i) => answers[`${active.key}-${i}`] === q.answer).length;
+    if (currentScore / questions.length >= 0.8) setPassed(previous => ({ ...previous, [active.key]: true }));
+    else setPassed(previous => ({ ...previous, [active.key]: false }));
+  }
+  function retryQuiz() {
+    setAnswers(previous => {
+      const next = { ...previous };
+      questions.forEach((_, i) => delete next[`${active.key}-${i}`]);
+      return next;
+    });
+    setSubmitted(previous => ({ ...previous, [active.key]: false }));
+    setPassed(previous => ({ ...previous, [active.key]: false }));
+  }
+  function go(delta) {
+    const index = allLessons.findIndex(item => item.key === active.key);
+    const next = Math.max(0, Math.min(allLessons.length - 1, index + delta));
+    chooseLesson(allLessons[next].key);
+  }
+
+  return <div className="app">
+    <header className="topbar">
+      <button className="brand" onClick={() => { chooseLesson(allLessons[0].key); window.scrollTo({top:0,behavior:"smooth"}); }} aria-label="Voltar ao início">
+        <span className="brandicon"><Factory size={22}/></span>
+        <span>TRÓPICOS<small>ACADEMIA INDUSTRIAL</small></span>
+      </button>
+      <div className="topbar-right"><span className="safe"><ShieldCheck size={16}/> Aprendizagem com segurança</span><span className="course-chip">REW-450 AFH</span></div>
+    </header>
+    <main>
+      <section className="hero">
+        <div className="hero-copy">
+          <span className="eyebrow"><GraduationCap size={15}/> TREINAMENTO INSTITUCIONAL</span>
+          <h1>Rebobinadeira<br/><em>REW-450 AFH</em></h1>
+          <p>Aprenda os conceitos de preparação, interface, comandos e segurança com explicações narradas e avaliações por etapa.</p>
+          <div className="hero-meta"><span><BookOpen size={15}/> 2 módulos</span><span><Headphones size={15}/> Narrador em português</span><span><ClipboardCheck size={15}/> Avaliação por lição</span></div>
+        </div>
+        <div className="hero-art" aria-hidden="true"><div className="rings"/><div className="machine"><Factory size={82} strokeWidth={1.2}/></div><small>APRENDIZAGEM CONTÍNUA</small></div>
+      </section>
+
+      <section className="course-heading">
+        <div><span className="eyebrow">MANUAL OFICIAL COMO REFERÊNCIA</span><h2>Trilha de aprendizagem</h2><p className="muted">{course.source}. O conteúdo deve ser validado pelo responsável técnico antes do uso operacional.</p></div>
+        <div className="overall-progress"><strong>{percent}%</strong><span>concluído</span><div className="track"><span style={{width:`${percent}%`}}/></div></div>
+      </section>
+
+      <div className="training-layout">
+        <aside className="sidebar">
+          <div className="sidebar-title"><BookOpen size={18}/><b>Conteúdo do curso</b></div>
+          {course.modules.map((module, mi) => {
+            const mp = moduleProgress[mi];
+            return <div className="module-group" key={module.id}>
+              <div className="module-heading"><span>MÓDULO {mi + 1}</span><b>{mp.done}/{mp.total}</b></div>
+              <h3>{module.title.replace(/^Módulo [12] — /, "")}</h3>
+              <p>{module.description}</p>
+              {module.topics.map(topic => <div className="topic-group" key={topic.id}>
+                <div className="topic-label">{topic.id}. {topic.title}</div>
+                {topic.parts.map((part, pi) => {
+                  const key = `${module.id}-${topic.id}-${pi}`;
+                  const selected = activeKey === key;
+                  return <button key={key} className={`lesson-link ${selected ? "active" : ""}`} onClick={() => chooseLesson(key)}>
+                    <span className="lesson-status">{passed[key] ? <CheckCircle2 size={16}/> : <span>{pi + 1}</span>}</span>
+                    <span className="lesson-link-text"><strong>{part.title}</strong><small>{submitted[key] ? passed[key] ? "Aprovado" : "Refazer avaliação" : "Estudo + avaliação"}</small></span>
+                    <ChevronRight size={15}/>
+                  </button>;
+                })}
+              </div>)}
+            </div>;
+          })}
+        </aside>
+
+        <article className="lesson-panel">
+          <div className="lesson-topline"><span className="eyebrow">{active.moduleTitle} · TÓPICO {active.topicId}</span><span className="ref-chip">{active.reference}</span></div>
+          <h2>{active.topicTitle}</h2>
+          <h3 className="part-title">{active.title}</h3>
+          <div className="visual-panel">
+            <div className="visual-grid"/>
+            <div className="visual-symbol"><Factory size={66} strokeWidth={1.2}/></div>
+            <div className="visual-caption"><ImageIcon size={16}/><span><b>Referência visual do manual</b><small>{active.imageCaption}</small></span></div>
+            <span className="image-review">FIGURAS A CONFERIR</span>
+          </div>
+          <div className="lesson-copy"><p>{active.body}</p>
+            <div className="narrator-bar"><span className="narrator-icon"><Volume2 size={19}/></span><div><b>Narrador virtual</b><small>Leitura em português brasileiro</small></div><button className={`listen-btn ${speaking ? "playing" : ""}`} onClick={narrate}>{speaking ? <XCircle size={16}/> : <Play size={16}/>} {speaking ? "Parar" : "Ouvir explicação"}</button></div>
+            <div className="safety-note"><ShieldCheck size={20}/><div><b>Alerta de segurança</b><p>Este conteúdo é didático e não substitui o manual integral, os procedimentos internos, a capacitação prática supervisionada nem a autorização formal para operar. Nunca contorne proteções. Confirme cada procedimento com o responsável técnico.</p></div></div>
+          </div>
+
+          <section className="quiz-section">
+            <div className="quiz-title"><div><span className="eyebrow">VERIFICAÇÃO DE APRENDIZAGEM</span><h3>Confira o que você aprendeu</h3></div><span className="pass-mark">Mínimo: 80%</span></div>
+            {!showQuiz && !quizDone && <div className="quiz-intro"><p>Responda às {questions.length} perguntas para validar esta etapa. A aprovação exige pelo menos 80% de acertos.</p><button className="primary" onClick={() => setShowQuiz(true)}>Iniciar avaliação <ChevronRight size={17}/></button></div>}
+            {(showQuiz || quizDone) && <div className="questions">
+              {questions.map((q, qi) => <fieldset className="question" key={q.q} disabled={quizDone}>
+                <legend>{qi + 1}. {q.q}</legend>
+                {q.options.map((option, oi) => <label key={option} className={`option ${quizDone && oi === q.answer ? "correct" : ""} ${quizDone && answers[`${active.key}-${qi}`] === oi && oi !== q.answer ? "incorrect" : ""}`}>
+                  <input type="radio" name={`${active.key}-${qi}`} checked={answers[`${active.key}-${qi}`] === oi} onChange={() => setAnswers(previous => ({...previous, [`${active.key}-${qi}`]: oi}))} disabled={quizDone}/>
+                  <span>{option}</span>{quizDone && oi === q.answer && <CheckCircle2 size={17}/>}
+                  {quizDone && answers[`${active.key}-${qi}`] === oi && oi !== q.answer && <XCircle size={17}/>}
+                </label>)}
+                {quizDone && <p className="answer-explanation"><b>Explicação:</b> {q.why}</p>}
+              </fieldset>)}
+              {!quizDone ? <button className="primary submit-quiz" onClick={submitQuiz} disabled={questions.some((_, i) => answers[`${active.key}-${i}`] === undefined)}>Corrigir avaliação <CheckCircle2 size={17}/></button> :
+                <div className={`result-banner ${passed[active.key] ? "success" : "retry"}`}>
+                  {passed[active.key] ? <CheckCircle2 size={23}/> : <XCircle size={23}/>}
+                  <div><b>{passed[active.key] ? "Etapa aprovada!" : "Ainda não aprovado"}</b><p>Você acertou {score} de {questions.length} ({Math.round(score / questions.length * 100)}%). {passed[active.key] ? "Sua aprovação nesta etapa foi registrada nesta sessão." : "Revise a explicação e tente novamente."}</p></div>
+                  {!passed[active.key] && <button className="secondary" onClick={retryQuiz}>Tentar novamente</button>}
+                </div>}
+            </div>}
+          </section>
+          <div className="lesson-footer"><button className="secondary" onClick={() => go(-1)} disabled={allLessons[0].key === active.key}><ChevronLeft size={17}/> Anterior</button><span>Etapa {allLessons.findIndex(l => l.key === active.key) + 1} de {allLessons.length}</span><button className="primary" onClick={() => { if (allLessons[allLessons.length - 1].key === active.key) { setShowCertificate(true); } else go(1); }} disabled={!passed[active.key] && allLessons[allLessons.length - 1].key !== active.key}>Próxima etapa <ChevronRight size={17}/></button></div>
+          {showCertificate && <div className={`completion-card ${allPassed ? "complete" : ""}`}><GraduationCap size={26}/><div><b>{allPassed ? "Trilha concluída" : "Trilha ainda não aprovada"}</b><p>{allPassed ? "Todas as avaliações foram aprovadas nesta sessão. A emissão de certificado institucional depende da validação e integração do registro de treinamento." : `Você aprovou ${completed} de ${allLessons.length} etapas. Conclua as avaliações restantes para aprovação.`}</p></div></div>}
+        </article>
+      </div>
+
+      <aside className="notice"><ShieldCheck size={22}/><div><b>Validação técnica e visual pendente</b><p>O conteúdo textual foi estruturado a partir dos tópicos identificados no manual. A correspondência e inserção das figuras originais, a revisão por especialista e os testes de compilação e publicação ainda precisam ser concluídos antes de considerar este treinamento pronto para uso.</p></div></aside>
+    </main>
+    <footer><span>© {new Date().getFullYear()} Trópicos · Academia Industrial</span><span><ShieldCheck size={14}/> Segurança, qualidade e aprendizagem contínua</span></footer>
+  </div>;
 }
