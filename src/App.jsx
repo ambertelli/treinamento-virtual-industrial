@@ -25,7 +25,7 @@ const figureFiles = {
 
 function getFigureNumbers(caption = "") {
   const numbers = new Set();
-  for (const match of caption.matchAll(/Figuras?\\s+(\\d+)(?:\\s+a\\s+(\\d+))?/gi)) {
+  for (const match of caption.matchAll(/Figuras?\s+(\d+)(?:\s+a\s+(\d+))?/gi)) {
     const start = Number(match[1]);
     const end = Number(match[2] || start);
     for (let n = start; n <= end; n++) numbers.add(n);
