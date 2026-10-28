@@ -48,11 +48,35 @@ const allLessons = course.modules.flatMap((module, moduleIndex) =>
   )
 );
 
+const PROGRESS_STORAGE_KEY = "tropicos-rew450-training-progress-v1";
+
+function loadSavedProgress() {
+  try {
+    const saved = window.localStorage.getItem(PROGRESS_STORAGE_KEY);
+    if (!saved) return {};
+    const parsed = JSON.parse(saved);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
 export default function App() {
-  const [activeKey, setActiveKey] = useState(allLessons[0].key);
-  const [answers, setAnswers] = useState({});
-  const [submitted, setSubmitted] = useState({});
-  const [passed, setPassed] = useState({});
+  const [initialProgress] = useState(loadSavedProgress);
+  const [activeKey, setActiveKey] = useState(() =>
+    allLessons.some(lesson => lesson.key === initialProgress.activeKey)
+      ? initialProgress.activeKey
+      : allLessons[0].key
+  );
+  const [answers, setAnswers] = useState(() =>
+    initialProgress.answers && typeof initialProgress.answers === "object" ? initialProgress.answers : {}
+  );
+  const [submitted, setSubmitted] = useState(() =>
+    initialProgress.submitted && typeof initialProgress.submitted === "object" ? initialProgress.submitted : {}
+  );
+  const [passed, setPassed] = useState(() =>
+    initialProgress.passed && typeof initialProgress.passed === "object" ? initialProgress.passed : {}
+  );
   const [speaking, setSpeaking] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
@@ -63,6 +87,19 @@ export default function App() {
   const completed = Object.keys(passed).filter(key => passed[key]).length;
   const percent = Math.round(completed / allLessons.length * 100);
   const allPassed = completed === allLessons.length;
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify({
+        activeKey,
+        answers,
+        submitted,
+        passed
+      }));
+    } catch {
+      // O treinamento continua funcionando mesmo se o navegador bloquear o armazenamento local.
+    }
+  }, [activeKey, answers, submitted, passed]);
 
   useEffect(() => () => {
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
