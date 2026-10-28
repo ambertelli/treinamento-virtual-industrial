@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Factory, GraduationCap, Headphones, Play, ShieldCheck, Volume2, XCircle, ClipboardCheck, Image as ImageIcon } from "lucide-react";
 import { course } from "./rew450-course";
+import CortadeiraTraining from "./CortadeiraTraining.jsx";
 import "./style.css";
 
 const figureFiles = {
@@ -61,7 +62,7 @@ function loadSavedProgress() {
   }
 }
 
-export default function App() {
+function RebobinadeiraTraining({ onBack }) {
   const [initialProgress] = useState(loadSavedProgress);
   const [activeKey, setActiveKey] = useState(() =>
     allLessons.some(lesson => lesson.key === initialProgress.activeKey)
@@ -159,7 +160,7 @@ export default function App() {
 
   return <div className="app">
     <header className="topbar">
-      <button className="brand" onClick={() => { chooseLesson(allLessons[0].key); window.scrollTo({top:0,behavior:"smooth"}); }} aria-label="Voltar ao início">
+      <button className="brand" onClick={() => { if (onBack) onBack(); else { chooseLesson(allLessons[0].key); window.scrollTo({top:0,behavior:"smooth"}); } }} aria-label="Voltar aos treinamentos">
         <span className="brandicon"><Factory size={22}/></span>
         <span>TRÓPICOS<small>ACADEMIA INDUSTRIAL</small></span>
       </button>
@@ -262,3 +263,45 @@ export default function App() {
     <footer><span>© {new Date().getFullYear()} Trópicos · Academia Industrial</span><span><ShieldCheck size={14}/> Segurança, qualidade e aprendizagem contínua</span></footer>
   </div>;
 }
+
+
+function App() {
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  if (selectedCourse === "cortadeira") return <CortadeiraTraining onBack={() => setSelectedCourse(null)} />;
+  if (selectedCourse === "rebobinadeira") return <RebobinadeiraTraining onBack={() => setSelectedCourse(null)} />;
+  return <div className="app">
+    <header className="topbar">
+      <div className="brand"><span className="brandicon"><Factory size={22}/></span><span>TRÓPICOS<small>ACADEMIA INDUSTRIAL</small></span></div>
+      <div className="topbar-right"><span className="safe"><ShieldCheck size={16}/> Aprendizagem com segurança</span></div>
+    </header>
+    <main>
+      <section className="hero">
+        <div className="hero-copy">
+          <span className="eyebrow"><GraduationCap size={15}/> TREINAMENTO INSTITUCIONAL</span>
+          <h1>Treinamento<br/><em>Virtual Industrial</em></h1>
+          <p>Selecione a máquina para iniciar o treinamento. Cada trilha mantém seu conteúdo, avaliações e progresso separados.</p>
+          <div className="hero-meta"><span><BookOpen size={15}/> Manuais oficiais</span><span><Headphones size={15}/> Narrador em português</span><span><ClipboardCheck size={15}/> Avaliação por etapa</span></div>
+        </div>
+        <div className="hero-art" aria-hidden="true"><div className="rings"/><div className="machine"><Factory size={82} strokeWidth={1.2}/></div><small>APRENDIZAGEM CONTÍNUA</small></div>
+      </section>
+      <section className="courses">
+        <div className="section-title"><div><span className="eyebrow">CATÁLOGO DE TREINAMENTOS</span><h2>Escolha seu treinamento</h2></div><span className="count">2 TREINAMENTOS</span></div>
+        <div className="cards">
+          <button className="card" onClick={() => setSelectedCourse("cortadeira")}>
+            <span className="courseicon c0"><Factory size={25}/></span><span className="cardkind">CORTE E FORMATO <span className="dot"/></span>
+            <h3>Cortadeira LS-30.1 AFH</h3><p>Habilitação e homing, telas e configurações, troca de formatos e pontos de lubrificação, conforme o manual oficial.</p>
+            <div className="progresslabel"><span>Manual de operação · 42 páginas</span><b>Iniciar →</b></div><div className="cardfoot"><span>Figuras e avaliações por módulo</span><span className="arrow"><ChevronRight size={16}/></span></div>
+          </button>
+          <button className="card" onClick={() => setSelectedCourse("rebobinadeira")}>
+            <span className="courseicon c1"><Factory size={25}/></span><span className="cardkind">REBOBINAMENTO <span className="dot"/></span>
+            <h3>Rebobinadeira REW-450 AFH</h3><p>Preparação e interface, comandos e segurança com explicações narradas e avaliações por etapa.</p>
+            <div className="progresslabel"><span>Manual de operação · 31 páginas</span><b>Iniciar →</b></div><div className="cardfoot"><span>Figuras e avaliações por etapa</span><span className="arrow"><ChevronRight size={16}/></span></div>
+          </button>
+        </div>
+      </section>
+      <aside className="notice"><ShieldCheck size={22}/><div><b>Importante</b><p>O treinamento virtual é material didático e não substitui o manual integral, a capacitação prática autorizada nem os procedimentos de segurança da empresa.</p></div></aside>
+    </main>
+    <footer><span>© {new Date().getFullYear()} Trópicos · Academia Industrial</span><span><ShieldCheck size={14}/> Segurança, qualidade e aprendizagem contínua</span></footer>
+  </div>;
+}
+export default App;
