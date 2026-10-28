@@ -35,11 +35,18 @@ jobs:
             console.error('Missing training figures:', missing.join(', '));
             process.exit(1);
           }
-          console.log(`Validated ${names.length} referenced training figure files.`);
+          console.log(`Validated ${names.length} referenced figure files.`);
           NODE
       - name: Validate course lessons and assessments
         run: node scripts/validate-course.mjs
+      - name: Copy original manual into the published site
+        run: |
+          mkdir -p public
+          cp "Manual de Operação - Rebobinadeira REW-450 AFH.pdf" public/
+          test -s "public/Manual de Operação - Rebobinadeira REW-450 AFH.pdf"
       - run: npm run build
+      - name: Verify published manual is in build output
+        run: test -s "dist/Manual de Operação - Rebobinadeira REW-450 AFH.pdf"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
