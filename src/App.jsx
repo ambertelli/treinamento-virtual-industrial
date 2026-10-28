@@ -3,6 +3,37 @@ import { ArrowLeft, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Factory, 
 import { course } from "./rew450-course";
 import "./style.css";
 
+const figureFiles = {
+  1: "figura-01-chave-geral.jpg",
+  2: "figura-02-emergencia-botoeira-principal.jpg",
+  3: "figura-03-emergencia-desenrolador.jpg",
+  8: "figura-08-porta-acesso-desenrolador.jpg",
+  9: "figura-09-tela-principal.jpg",
+  10: "figura-10-estatisticas-producao.jpg",
+  11: "figura-11-contato.jpg",
+  12: "figura-12-alarmes.jpg",
+  13: "figura-13-dados-produto.jpg",
+  14: "figura-14-configuracoes.jpg",
+  15: "figura-15-posicao-zero-prensa.jpg",
+  16: "figura-16-liberacao-manual-freio.jpg",
+  17: "figura-17-colador-rabichos.jpg",
+  18: "figura-18-status-servodrive.jpg",
+  19: "figura-19-botoeira-principal.jpg",
+  20: "figura-20-botoeira-desenrolador.jpg",
+  21: "figura-21-comando-homem-vivo-morto.jpg"
+};
+
+function getFigureNumbers(caption = "") {
+  const numbers = new Set();
+  for (const match of caption.matchAll(/Figuras?\s+(\d+)(?:\s+a\s+(\d+))?/gi)) {
+    const start = Number(match[1]);
+    const end = Number(match[2] || start);
+    for (let n = start; n <= end; n++) numbers.add(n);
+  }
+  return [...numbers];
+}
+
+
 const allLessons = course.modules.flatMap((module, moduleIndex) =>
   module.topics.flatMap((topic, topicIndex) =>
     topic.parts.map((part, partIndex) => ({
@@ -140,9 +171,15 @@ export default function App() {
           <h3 className="part-title">{active.title}</h3>
           <div className="visual-panel">
             <div className="visual-grid"/>
-            <div className="visual-symbol"><Factory size={66} strokeWidth={1.2}/></div>
-            <div className="visual-caption"><ImageIcon size={16}/><span><b>Referência visual do manual</b><small>{active.imageCaption}</small></span></div>
-            <span className="image-review">FIGURAS A CONFERIR</span>
+            <div className="visual-caption"><ImageIcon size={16}/><span><b>Figuras originais do manual</b><small>{active.imageCaption}</small></span></div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:14,padding:"18px",position:"relative",zIndex:1,width:"100%"}}>
+              {getFigureNumbers(active.imageCaption).filter(n => figureFiles[n]).map(n => (
+                <figure key={n} style={{margin:0,background:"#fff",border:"1px solid #dfe7e1",borderRadius:10,padding:10,overflow:"hidden"}}>
+                  <img src={`/figuras-rew450/${figureFiles[n]}`} alt={`Figura ${n} — manual da Rebobinadeira REW-450 AFH`} loading="lazy" style={{display:"block",width:"100%",height:190,objectFit:"contain",background:"#f7f8f6"}}/>
+                  <figcaption style={{fontSize:12,color:"#52645a",paddingTop:8,fontWeight:600}}>Figura {n} — REW-450 AFH</figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
           <div className="lesson-copy"><p>{active.body}</p>
             <div className="narrator-bar"><span className="narrator-icon"><Volume2 size={19}/></span><div><b>Narrador virtual</b><small>Leitura em português brasileiro</small></div><button className={`listen-btn ${speaking ? "playing" : ""}`} onClick={narrate}>{speaking ? <XCircle size={16}/> : <Play size={16}/>} {speaking ? "Parar" : "Ouvir explicação"}</button></div>
