@@ -30,6 +30,25 @@ with check (public.has_role(auth.uid(),'admin'));
 create policy "users read own roles" on public.user_roles for select to authenticated
 using (auth.uid() = user_id or public.has_role(auth.uid(),'admin'));
 
+
+-- Backfill users that existed before this migration, including the designated administrator.
+insert into public.profiles (id, nome, email, status)
+select u.id,
+       coalesce(u.raw_user_meta_data->>'nome', u.raw_user_meta_data->>'full_name', ''),
+       lower(u.email),
+       case when lower(u.email) = 'ambertelli2000@hotmail.com' then 'aprovado' else 'pendente' end
+from auth.users u
+where u.email is not null
+on conflict (id) do update
+set email = excluded.email,
+    nome = case when public.profiles.nome = '' then excluded.nome else public.profiles.nome end;
+
+insert into public.user_roles(user_id, role)
+select u.id, case when lower(u.email) = 'ambertelli2000@hotmail.com' then 'admin' else 'user' end
+from auth.users u
+where u.email is not null
+on conflict (user_id, role) do nothing;
+
 create or replace function public.handle_new_training_user()
 returns trigger language plpgsql security definer set search_path = public
 as $$
