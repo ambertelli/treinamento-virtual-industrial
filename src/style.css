@@ -173,3 +173,82 @@ body{background:#f4f9fd}
 .app .lesson-panel>.part-title{font-size:clamp(18px,2vw,23px);margin-top:10px}
 .app .lesson-panel .lesson-copy,.app .lesson-panel .quiz-section{min-width:0}
 @media(max-width:700px){.app .lesson-panel .lesson-topline{display:grid;grid-template-columns:minmax(0,1fr)}.app .lesson-panel .ref-chip{justify-self:start}.app .lesson-panel>h2,.app .lesson-panel>.part-title{overflow-wrap:anywhere}}
+
+
+/* Rebobinadeira: keep long lesson titles readable and show every referenced figure. */
+.app:has(.course-topbar) .lesson-panel > h2,
+.app:has(.course-topbar) .lesson-panel > .part-title {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+  max-width: 100%;
+}
+.app:has(.course-topbar) .lesson-panel > h2 {
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.25;
+}
+.app:has(.course-topbar) .lesson-panel > .part-title {
+  font-size: clamp(15px, 1.5vw, 17px);
+  line-height: 1.45;
+}
+.app:has(.course-topbar) .visual-panel {
+  height: auto;
+  min-height: 220px;
+  display: block;
+  padding: 58px 0 8px;
+  overflow: visible;
+}
+.app:has(.course-topbar) .visual-panel > div[style*="grid-template-columns"] {
+  box-sizing: border-box;
+}
+.app:has(.course-topbar) .visual-caption {
+  top: 15px;
+  bottom: auto;
+  z-index: 2;
+}
+.app:has(.course-topbar) .visual-grid {
+  pointer-events: none;
+}
+.app:has(.course-topbar) .course-heading {
+  align-items: flex-start;
+}
+.app:has(.course-topbar) .course-actions {
+  min-width: min(220px, 100%) !important;
+}
+@media (max-width: 760px) {
+  .app:has(.course-topbar) header.topbar {
+    height: auto;
+    min-height: 66px;
+    padding: 12px 16px;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .app:has(.course-topbar) .course-topbar {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 7px;
+    text-align: right;
+  }
+  .app:has(.course-topbar) .header-progress {
+    max-width: 180px;
+  }
+  .app:has(.course-topbar) .course-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .app:has(.course-topbar) .training-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app:has(.course-topbar) .sidebar {
+    position: static;
+    max-height: none;
+  }
+  .app:has(.course-topbar) .lesson-panel {
+    padding: 20px 16px;
+    min-width: 0;
+  }
+  .app:has(.course-topbar) .visual-panel img {
+    max-width: 100%;
+  }
+}
