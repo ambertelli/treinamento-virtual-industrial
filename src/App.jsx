@@ -3,6 +3,7 @@ import { ArrowLeft, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Factory, 
 import { course } from "./rew450-course";
 import CortadeiraTraining from "./CortadeiraTraining.jsx";
 import "./style.css";
+import AuthGate from "./AuthGate.jsx";
 
 const figureFiles = {
   1: "figura-01-chave-geral.jpg",
@@ -265,7 +266,7 @@ function RebobinadeiraTraining({ onBack }) {
 }
 
 
-function App() {
+function TrainingApp() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   if (selectedCourse === "cortadeira") return <CortadeiraTraining onBack={() => setSelectedCourse(null)} />;
   if (selectedCourse === "rebobinadeira") return <RebobinadeiraTraining onBack={() => setSelectedCourse(null)} />;
@@ -304,4 +305,4 @@ function App() {
     <footer><span>© {new Date().getFullYear()} Trópicos · Academia Industrial</span><span><ShieldCheck size={14}/> Segurança, qualidade e aprendizagem contínua</span></footer>
   </div>;
 }
-export default App;
+export default function App() { return <AuthGate><TrainingApp /></AuthGate>; }
