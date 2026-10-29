@@ -162,3 +162,14 @@ body{background:#f4f9fd}
  .lesson-panel,.cutter-course .lesson-panel{padding:16px!important}
  .lesson-panel h2,.cutter-course .lesson-panel h2{font-size:23px!important}
 }
+
+
+/* Rebobinadeira-only typography fix: keep long lesson titles from colliding with references/subtitles. */
+.app .lesson-panel .lesson-topline{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px;min-width:0}
+.app .lesson-panel .lesson-topline .eyebrow{min-width:0;flex:1 1 220px;overflow-wrap:anywhere;line-height:1.45}
+.app .lesson-panel .ref-chip{flex:0 1 auto;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.app .lesson-panel>h2,.app .lesson-panel>.part-title{position:relative;display:block;height:auto;min-height:0;line-height:1.25;white-space:normal;overflow-wrap:anywhere;word-break:normal;margin:14px 0}
+.app .lesson-panel>h2{font-size:clamp(22px,2.4vw,30px)}
+.app .lesson-panel>.part-title{font-size:clamp(18px,2vw,23px);margin-top:10px}
+.app .lesson-panel .lesson-copy,.app .lesson-panel .quiz-section{min-width:0}
+@media(max-width:700px){.app .lesson-panel .lesson-topline{display:grid;grid-template-columns:minmax(0,1fr)}.app .lesson-panel .ref-chip{justify-self:start}.app .lesson-panel>h2,.app .lesson-panel>.part-title{overflow-wrap:anywhere}}
